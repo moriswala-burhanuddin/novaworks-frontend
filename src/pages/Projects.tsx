@@ -9,6 +9,8 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [nextPage, setNextPage] = useState<string | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { formatPrice } = useCurrency();
 
   // Filters
@@ -21,7 +23,10 @@ export default function Projects() {
   }, []);
 
   useEffect(() => {
-    fetchProjects();
+    // Reset projects when filter changes
+    setProjects([]);
+    setNextPage(null);
+    fetchProjects(true);
   }, [activeCategory, searchQuery]);
 
   const fetchInitialData = async () => {
@@ -43,8 +48,8 @@ export default function Projects() {
     }
   };
 
-  const fetchProjects = async () => {
-    setLoading(true);
+  const fetchProjects = async (isInitial = false) => {
+    if (isInitial) setLoading(true);
     try {
       const params: any = {};
       if (activeCategory !== 'all') params.category__slug = activeCategory;
@@ -52,10 +57,38 @@ export default function Projects() {
 
       const res = await storeAPI.getProjects(params);
       setProjects(res.data.results);
+      setNextPage(res.data.next);
     } catch (error) {
       console.error("Failed to fetch projects", error);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (!nextPage || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      // We need to parse the page number or full URL. 
+      // storeAPI.getProjects accepts params. 
+      // Or we can just use axios directly if we want to follow the URL exactly, 
+      // but let's stick to using the API with page param if possible, 
+      // OR better yet, just extract the 'page' query param from the next URL.
+      const url = new URL(nextPage);
+      const page = url.searchParams.get('page');
+      if (page) {
+        const params: any = { page };
+        if (activeCategory !== 'all') params.category__slug = activeCategory;
+        if (searchQuery) params.search = searchQuery;
+
+        const res = await storeAPI.getProjects(params);
+        setProjects(prev => [...prev, ...res.data.results]);
+        setNextPage(res.data.next);
+      }
+    } catch (error) {
+      console.error("Failed to load more projects", error);
+    } finally {
+      setIsLoadingMore(false);
     }
   };
 
@@ -214,7 +247,7 @@ export default function Projects() {
                     <div className="aspect-[4/3] overflow-hidden relative">
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent opacity-80 z-10" />
                       <img
-                        src={getMediaUrl(project.thumbnail || project.image)}
+                        src={getMediaUrl(project.thumbnail)}
                         alt={project.title}
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                       />
@@ -280,7 +313,28 @@ export default function Projects() {
             </div>
           )}
         </div>
+
+        {/* Load More Button */}
+        {nextPage && (
+          <div className="mt-16 text-center">
+            <button
+              onClick={loadMore}
+              disabled={isLoadingMore}
+              className="px-8 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-full font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+            >
+              {isLoadingMore ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Load More Projects'
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
+
   );
 }

@@ -32,7 +32,33 @@ api.interceptors.request.use((config) => {
     config.headers['X-Cart-Session'] = sessionId;
   }
   return config;
+  return config;
 });
+
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle Network Errors (Backend down/unreachable)
+    if (!error.response) {
+      // Network Error (DNS, Server Down, CORS)
+      console.error("Network Error Deteced:", error);
+      // You might want to trigger a global toast or redirect here
+      // For now, we rely on the component catching it, but we can emit an event or use a global store
+      // toast.error("Unable to connect to server. Please check your connection.");
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Production Console Cleanup
+if (import.meta.env.PROD) {
+  const noop = () => { };
+  console.log = noop;
+  console.info = noop;
+  // We keep console.error for critical debugging if needed, or remove it too:
+  // console.error = noop; 
+}
 
 export const projectsAPI = {
   getAll: (params?: any) => api.get('/projects/', { params }),
