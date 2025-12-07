@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { cartAPI, Cart as CartType } from '../services/api';
+import { cartAPI, Cart as CartType, getMediaUrl } from '../services/api';
 import { useCurrency } from '../context/CurrencyContext';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
@@ -75,7 +75,7 @@ export default function Cart() {
               <div key={item.id} className="flex flex-col sm:flex-row gap-6 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm relative group">
                 <div className="w-32 h-24 rounded-lg overflow-hidden bg-gray-800 flex-shrink-0">
                   <img
-                    src={item.project.thumbnail ? (item.project.thumbnail.startsWith('http') ? item.project.thumbnail : `http://localhost:8000${item.project.thumbnail}`) : ''}
+                    src={getMediaUrl(item.project.thumbnail)}
                     alt={item.project.title}
                     className="w-full h-full object-cover"
                   />
