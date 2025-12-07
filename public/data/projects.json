@@ -1,0 +1,117 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "E-Commerce Platform",
+      "category": "Full Stack",
+      "price": 299,
+      "image": "https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg",
+      "description": "Complete online store with payment gateway integration, user authentication, product management, and order tracking.",
+      "tech": ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
+      "features": [
+        "User authentication and authorization",
+        "Shopping cart functionality",
+        "Payment gateway integration",
+        "Admin dashboard",
+        "Order management system"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Social Media Dashboard",
+      "category": "Frontend",
+      "price": 199,
+      "image": "https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg",
+      "description": "Modern analytics dashboard with real-time data visualization and responsive design.",
+      "tech": ["React", "TypeScript", "Tailwind CSS", "Chart.js"],
+      "features": [
+        "Real-time analytics",
+        "Interactive charts",
+        "Responsive design",
+        "Dark mode support"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "AI Chatbot System",
+      "category": "Backend",
+      "price": 399,
+      "image": "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg",
+      "description": "Intelligent conversation system with natural language processing and context awareness.",
+      "tech": ["Python", "FastAPI", "OpenAI", "PostgreSQL"],
+      "features": [
+        "Natural language processing",
+        "Context-aware responses",
+        "Multi-language support",
+        "Conversation history"
+      ]
+    }
+  ],
+  "designs": [
+    {
+      "id": 1,
+      "title": "Modern Banking App UI",
+      "type": "Figma",
+      "image": "https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg",
+      "link": "https://figma.com/example",
+      "description": "Complete mobile banking app design with modern UI/UX principles"
+    },
+    {
+      "id": 2,
+      "title": "E-Learning Platform",
+      "type": "Canva",
+      "image": "https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg",
+      "link": "https://canva.com/example",
+      "description": "Educational platform design with interactive course layouts"
+    }
+  ],
+  "miniProjects": [
+    {
+      "id": 1,
+      "title": "Sorting Algorithms Visualizer",
+      "language": "Python",
+      "description": "Interactive visualization of sorting algorithms with step-by-step execution",
+      "lines": 250,
+      "icon": "🐍",
+      "algorithms": ["Bubble Sort", "Quick Sort", "Merge Sort", "Heap Sort"]
+    },
+    {
+      "id": 2,
+      "title": "File System Manager",
+      "language": "C++",
+      "description": "Efficient file operations and management system with advanced features",
+      "lines": 450,
+      "icon": "⚙️",
+      "features": ["Create", "Read", "Update", "Delete", "Search"]
+    },
+    {
+      "id": 3,
+      "title": "CLI Task Manager",
+      "language": "C",
+      "description": "Command-line todo list application with priority management",
+      "lines": 320,
+      "icon": "📋",
+      "commands": ["add", "list", "complete", "delete", "priority"]
+    }
+  ],
+  "testimonials": [
+    {
+      "id": 1,
+      "name": "Sarah Johnson",
+      "role": "CTO",
+      "company": "TechStart Inc",
+      "image": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg",
+      "rating": 5,
+      "text": "The quality of code is exceptional. Saved us months of development time. The documentation was clear and implementation was seamless."
+    },
+    {
+      "id": 2,
+      "name": "Michael Chen",
+      "role": "Lead Developer",
+      "company": "Digital Solutions",
+      "image": "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg",
+      "rating": 5,
+      "text": "Best investment for our project. Clean, maintainable code with excellent architecture. Highly recommended for any serious development team."
+    }
+  ]
+}
