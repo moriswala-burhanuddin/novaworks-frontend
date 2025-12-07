@@ -1,85 +1,101 @@
 import { useState } from "react";
 import { authAPI } from "../services/api";
 import { Link } from "react-router-dom";
-import { Mail, CheckCircle, ArrowLeft, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { Mail, ArrowRight, Loader2, ArrowLeft } from "lucide-react";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
+    const [submitted, setSubmitted] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setError("");
-        setMessage("");
 
         try {
             await authAPI.requestPasswordReset(email);
-            setMessage("If an account exists with this email, you will receive a password reset link shortly.");
+            setSubmitted(true);
+            toast.success("Reset link sent!");
         } catch (err: any) {
-            // For security, don't reveal if user exists, but for UX maybe show generic error
-            console.error(err);
-            setError("Something went wrong. Please try again.");
+            toast.error("Failed to send reset email. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-            <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Forgot Password?</h1>
-                    <p className="text-gray-500 mt-2">Enter your email to reset your password.</p>
-                </div>
+        <div className="min-h-screen bg-slate-950 flex justify-center items-center px-4 relative overflow-hidden">
+            {/* Dynamic Background */}
+            <div className="absolute top-0 left-0 w-full h-[600px] bg-purple-600/10 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-full h-[600px] bg-indigo-600/10 rounded-full blur-[120px] translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-                {message ? (
-                    <div className="text-center space-y-4">
-                        <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                            <CheckCircle size={32} />
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md relative z-10"
+            >
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
+                    <div className="text-center mb-8">
+                        <h2 className="text-3xl font-bold text-white mb-2">Forgot Password?</h2>
+                        <p className="text-slate-400">Enter your email and we'll send you a recovery link</p>
+                    </div>
+
+                    {!submitted ? (
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-slate-300 ml-1">Email Address</label>
+                                <div className="relative group">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-400 transition-colors" size={20} />
+                                    <input
+                                        type="email"
+                                        placeholder="name@example.com"
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500/50 focus:bg-black/40 transition-all font-medium"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                disabled={loading}
+                                className="w-full bg-purple-600 hover:bg-purple-500 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-purple-600/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="animate-spin" size={20} />
+                                        Sending...
+                                    </>
+                                ) : (
+                                    <>
+                                        Send Reset Link
+                                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                                    </>
+                                )}
+                            </button>
+                        </form>
+                    ) : (
+                        <div className="text-center py-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400">
+                            <h3 className="font-bold text-lg mb-2">Check your email</h3>
+                            <p className="text-sm opacity-80">We have sent a password reset link to <br /> <strong className="text-white">{email}</strong></p>
+                            <button
+                                onClick={() => setSubmitted(false)}
+                                className="text-sm underline mt-4 hover:text-white"
+                            >
+                                Try different email
+                            </button>
                         </div>
-                        <p className="text-green-700 font-medium">{message}</p>
-                        <Link to="/login" className="inline-block mt-4 text-blue-600 font-bold hover:underline">
-                            Back to Login
+                    )}
+
+                    <div className="text-center mt-8 pt-8 border-t border-white/5">
+                        <Link to="/login" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-medium">
+                            <ArrowLeft size={16} /> Back to Login
                         </Link>
                     </div>
-                ) : (
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {error && <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm font-medium">{error}</div>}
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="you@example.com"
-                                />
-                            </div>
-                        </div>
-
-                        <button
-                            disabled={loading}
-                            className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition disabled:opacity-70 flex items-center justify-center gap-2"
-                        >
-                            {loading && <Loader2 className="animate-spin" size={20} />}
-                            {loading ? "Sending Link..." : "Send Reset Link"}
-                        </button>
-
-                        <div className="text-center">
-                            <Link to="/login" className="text-gray-500 hover:text-gray-900 text-sm flex items-center justify-center gap-1">
-                                <ArrowLeft size={16} /> Back to Login
-                            </Link>
-                        </div>
-                    </form>
-                )}
-            </div>
+                </div>
+            </motion.div>
         </div>
     );
 }
