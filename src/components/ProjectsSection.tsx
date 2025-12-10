@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowUpRight, Github, Star, GitFork, Loader2 } from 'lucide-react';
+import { ArrowUpRight, Github, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { storeAPI, Project, getMediaUrl } from '../services/api';
@@ -14,7 +14,7 @@ export default function ProjectsSection() {
       try {
         const response = await storeAPI.getProjects();
         const data = Array.isArray(response.data) ? response.data : response.data.results || [];
-        setProjects(data.slice(0, 3));
+        setProjects(data.slice(0, 10));
       } catch (err) {
         console.error("Failed to fetch projects:", err);
         setError("Failed to load projects.");
@@ -115,6 +115,16 @@ export default function ProjectsSection() {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-16 text-center">
+          <Link
+            to="/projects"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-full font-bold transition-all group"
+          >
+            View More Projects
+            <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+          </Link>
         </div>
       </div>
     </section>
