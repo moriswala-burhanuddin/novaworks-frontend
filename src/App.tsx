@@ -38,6 +38,7 @@ import AdminRoute from './components/AdminRoute';
 
 
 import WebsiteLayout from './layouts/WebsiteLayout';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
       <CurrencyProvider>
         <CartProvider>
           <Router>
+            <ScrollToTop />
             <div className="min-h-screen bg-transparent flex flex-col">
               <Toaster position="top-center" richColors />
 

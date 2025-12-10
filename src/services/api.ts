@@ -166,6 +166,7 @@ export interface Project {
   features?: KeyFeature[];
   version: string;
   demo_link?: string;
+  demo_video_url?: string;
   github_release_url?: string;
   license_type: string;
   featured: boolean;
