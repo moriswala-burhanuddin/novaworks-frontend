@@ -3,34 +3,32 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { getMediaUrl } from '../services/api';
+import { storeAPI } from '../services/api';
 
 interface ReadmeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    readmeUrl: string | null;
+    slug: string | null; // Changed from readmeUrl to slug
     title: string;
 }
 
-export default function ReadmeModal({ isOpen, onClose, readmeUrl, title }: ReadmeModalProps) {
+export default function ReadmeModal({ isOpen, onClose, slug, title }: ReadmeModalProps) {
     const [content, setContent] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
 
     useEffect(() => {
-        if (isOpen && readmeUrl) {
+        if (isOpen && slug) {
             setLoading(true);
             setError(false);
-            fetch(getMediaUrl(readmeUrl))
+            storeAPI.getProjectReadme(slug)
                 .then(res => {
-                    if (!res.ok) throw new Error("Failed to load");
-                    return res.text();
+                    setContent(res.data.content);
                 })
-                .then(text => setContent(text))
                 .catch(() => setError(true))
                 .finally(() => setLoading(false));
         }
-    }, [isOpen, readmeUrl]);
+    }, [isOpen, slug]);
 
     return (
         <AnimatePresence>

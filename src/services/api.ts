@@ -234,6 +234,7 @@ export const storeAPI = {
     api.get(`/store/orders/${orderId}/download/${itemId}/`, { responseType: 'blob' }),
   submitContact: (data: { name: string; email: string; subject: string; message: string }) =>
     api.post('/store/contact/', data),
+  getProjectReadme: (slug: string) => api.get<{ content: string }>(`/store/projects/${slug}/readme/`),
 };
 
 export const usersAPI = {

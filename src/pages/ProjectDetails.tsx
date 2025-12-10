@@ -143,8 +143,8 @@ export default function ProjectDetails() {
                                                 key={img.id}
                                                 onClick={() => setActiveImage(img.image)}
                                                 className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${activeImage === img.image
-                                                        ? 'border-blue-500 shadow-lg shadow-blue-500/20 opacity-100 ring-2 ring-blue-500/20'
-                                                        : 'border-transparent opacity-60 hover:opacity-100 hover:border-white/20'
+                                                    ? 'border-blue-500 shadow-lg shadow-blue-500/20 opacity-100 ring-2 ring-blue-500/20'
+                                                    : 'border-transparent opacity-60 hover:opacity-100 hover:border-white/20'
                                                     }`}
                                             >
                                                 <img src={getMediaUrl(img.image) || ''} alt="" className="w-full h-full object-cover" />
@@ -358,7 +358,7 @@ export default function ProjectDetails() {
             <ReadmeModal
                 isOpen={isReadmeOpen}
                 onClose={() => setIsReadmeOpen(false)}
-                readmeUrl={project.readme_file || null}
+                slug={project.slug}
                 title={project.title}
             />
         </div>
