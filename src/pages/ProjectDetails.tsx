@@ -7,6 +7,7 @@ import { ShoppingCart, ExternalLink, ArrowLeft, CheckCircle2, Package, Layers, H
 import { motion } from 'framer-motion';
 import ReviewSection from '../components/Reviews/ReviewSection';
 import ReadmeModal from '../components/ReadmeModal';
+import ImageModal from '../components/ImageModal';
 
 export default function ProjectDetails() {
     const { slug } = useParams<{ slug: string }>();
@@ -14,9 +15,12 @@ export default function ProjectDetails() {
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [activeImage, setActiveImage] = useState<string | null>(null);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [isReadmeOpen, setIsReadmeOpen] = useState(false);
     const { formatPrice } = useCurrency();
+
+    const activeImage = project?.images?.[activeImageIndex]?.image || null;
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -24,9 +28,11 @@ export default function ProjectDetails() {
                 if (!slug) return;
                 const res = await storeAPI.getProjectBySlug(slug);
                 setProject(res.data);
+
+                // Set initial active image
                 if (res.data.images && res.data.images.length > 0) {
-                    const thumb = res.data.images.find(img => img.is_thumbnail);
-                    setActiveImage(thumb ? thumb.image : res.data.images[0].image);
+                    const thumbIndex = res.data.images.findIndex(img => img.is_thumbnail);
+                    setActiveImageIndex(thumbIndex !== -1 ? thumbIndex : 0);
                 }
             } catch (err) {
                 setError('Project not found or failed to load.');
@@ -104,7 +110,11 @@ export default function ProjectDetails() {
                         <div className="lg:col-span-7 space-y-10">
                             {/* Main Image Gallery */}
                             <div className="space-y-6">
-                                <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#0f172a] group">
+                                {/* Main Image Viewer */}
+                                <div
+                                    className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#0f172a] group cursor-zoom-in"
+                                    onClick={() => setIsImageModalOpen(true)}
+                                >
                                     {/* Badges */}
                                     <div className="absolute top-6 left-6 z-20 flex flex-col gap-3 pointer-events-none">
                                         {project.discount_percentage > 0 && (
@@ -125,7 +135,7 @@ export default function ProjectDetails() {
                                         <img
                                             src={getMediaUrl(activeImage) || ''}
                                             alt={project.title}
-                                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                            className="w-full h-full object-contain bg-[#0f172a] transition-transform duration-500 group-hover:scale-[1.02]"
                                             loading="eager"
                                         />
                                     ) : (
@@ -133,15 +143,22 @@ export default function ProjectDetails() {
                                             <ImageIcon size={64} className="opacity-50" />
                                         </div>
                                     )}
+
+                                    {/* Zoom Hint */}
+                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                        <span className="px-4 py-2 bg-black/60 backdrop-blur rounded-full text-white text-sm font-medium flex items-center gap-2">
+                                            <ImageIcon size={16} /> Click to view full size
+                                        </span>
+                                    </div>
                                 </div>
 
                                 {/* Thumbnails */}
                                 {project.images && project.images.length > 1 && (
                                     <div className="grid grid-cols-5 gap-3">
-                                        {project.images.map((img) => (
+                                        {project.images.map((img, idx) => (
                                             <button
                                                 key={img.id}
-                                                onClick={() => setActiveImage(img.image)}
+                                                onClick={() => setActiveImageIndex(idx)}
                                                 className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${activeImage === img.image
                                                     ? 'border-blue-500 shadow-lg shadow-blue-500/20 opacity-100 ring-2 ring-blue-500/20'
                                                     : 'border-transparent opacity-60 hover:opacity-100 hover:border-white/20'
@@ -360,6 +377,13 @@ export default function ProjectDetails() {
                 onClose={() => setIsReadmeOpen(false)}
                 slug={project.slug}
                 title={project.title}
+            />
+
+            <ImageModal
+                isOpen={isImageModalOpen}
+                onClose={() => setIsImageModalOpen(false)}
+                images={project.images}
+                initialIndex={activeImageIndex}
             />
         </div>
     );
